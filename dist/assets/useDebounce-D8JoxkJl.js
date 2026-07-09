@@ -1,0 +1,1 @@
+import{r}from"./index-fbJLWenv.js";const s=(t,u)=>{const e=r.useRef(null),c=(...n)=>{clearTimeout(e.current),e.current=setTimeout(()=>{t(...n)},u)};return r.useEffect(()=>()=>clearTimeout(e.current),[]),c};export{s as u};
