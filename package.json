@@ -6,7 +6,7 @@
   "description": "Food Delivery Web Application - React Frontend (Zomato + Swiggy inspired)",
 
   "engines": {
-    "node": "20.x"
+    "node": "24.x"
   },
 
   "scripts": {
