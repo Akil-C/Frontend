@@ -215,7 +215,7 @@ const Home = () => {
                 >
                   <div className="restaurant-card-img-wrap">
                     <img
-                      src={r.images?.[0]?.imageUrl || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=400&auto=format&fit=crop'}
+                      src={r.logoUrl || r.images?.[0]?.imageUrl || '/assets/placeholder-restaurant.jpg'}
                       alt={r.name}
                       className="restaurant-card-img"
                       loading="lazy"
