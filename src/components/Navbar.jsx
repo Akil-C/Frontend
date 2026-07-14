@@ -4,6 +4,7 @@ import { FiShoppingCart, FiUser, FiSearch, FiMapPin, FiSun, FiMoon, FiMenu, FiX,
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
+import logo from '../assets/logo.svg';
 import { useToast } from '../context/ToastContext';
 
 const Navbar = () => {
@@ -29,8 +30,8 @@ const Navbar = () => {
     <nav className="navbar" role="navigation" aria-label="Main navigation">
       <div className="container navbar-inner">
         {/* Logo */}
-        <Link to="/" className="navbar-logo" aria-label="PrimeBites Home">
-          🍕 Prime<span>Bites</span>
+        <Link to="/" className="navbar-logo" aria-label="Prime Bites Home">
+          <img src={logo} alt="Prime Bites" className="logo-image" />
         </Link>
 
         {/* Location */}
