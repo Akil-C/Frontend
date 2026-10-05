@@ -52,11 +52,11 @@ export const CartProvider = ({ children }) => {
   const cartCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   const cartSubtotal = cart?.items?.reduce(
-    (sum, item) => sum + item.food.price * item.quantity, 0
+    (sum, item) => sum + (item.food?.price || 0) * item.quantity, 0
   ) || 0;
 
   const getItemQuantity = (foodId) => {
-    const item = cart?.items?.find(i => i.food.id === foodId);
+    const item = cart?.items?.find(i => i.food?.id === foodId);
     return item ? item.quantity : 0;
   };
 
