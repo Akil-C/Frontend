@@ -61,13 +61,13 @@ export const CartProvider = ({ children }) => {
   };
 
   const getCartItemId = (foodId) => {
-    return cart?.items?.find(i => i.food.id === foodId)?.id || null;
+    return cart?.items?.find(i => i.food?.id === foodId)?.id || null;
   };
 
   return (
     <CartContext.Provider value={{
       cart, loading, fetchCart,
-      addItem, updateItem, removeItem, emptyCart,
+      addItem, addToCart: addItem, updateItem, removeItem, emptyCart,
       cartCount, cartSubtotal, getItemQuantity, getCartItemId
     }}>
       {children}

@@ -46,7 +46,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const isAdmin = () => user?.roles?.includes('ROLE_ADMIN');
+  const isAdmin = Boolean(user?.roles?.includes('ROLE_ADMIN'));
   const isAuthenticated = () => !!user;
 
   return (

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiArrowUpRight, FiSearch } from 'react-icons/fi';
 import { getRestaurants, getFoods } from '../services/apiService';
+import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
 
@@ -70,7 +71,8 @@ const Landing = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [dishes, setDishes] = useState(POPULAR_DISHES);
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { isAuthenticated } = useAuth();
+  const { addItem } = useCart();
   const { toast } = useToast();
 
   useEffect(() => {
@@ -108,19 +110,19 @@ const Landing = () => {
     }
   };
 
-  const handleQuickAdd = (dish, e) => {
+  const handleQuickAdd = async (dish, e) => {
     e.stopPropagation();
-    if (dish.rawFood) {
-      addToCart(dish.rawFood);
-    } else {
-      addToCart({
-        id: dish.id,
-        name: dish.name,
-        price: parseFloat(dish.price.replace('$', '')) || 16,
-        imageUrl: dish.image,
-      });
+    if (!isAuthenticated()) {
+      toast.error('Please sign in to add items to your cart');
+      navigate('/login');
+      return;
     }
-    toast.success(`ADDED ${dish.name} TO CART`);
+    try {
+      await addItem(dish.id, 1);
+      toast.success(`Added ${dish.name} to cart!`);
+    } catch {
+      toast.error('Could not add item to cart. Please try again.');
+    }
   };
 
   return (
