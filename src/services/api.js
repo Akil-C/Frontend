@@ -29,6 +29,11 @@ axiosInstance.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // If the request was to an auth endpoint (login, register, refresh), do not try to refresh or redirect
+    if (originalRequest?.url?.includes('/auth/')) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshToken = localStorage.getItem('refreshToken');
@@ -44,11 +49,15 @@ axiosInstance.interceptors.response.use(
         } catch (_err) {
           // Refresh failed — force logout
           localStorage.clear();
-          window.location.href = '/login';
+          if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+            window.location.href = '/login';
+          }
         }
       } else {
         localStorage.clear();
-        window.location.href = '/login';
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          window.location.href = '/login';
+        }
       }
     }
 

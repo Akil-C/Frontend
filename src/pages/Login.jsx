@@ -40,25 +40,32 @@ const Login = () => {
     setLoading(true);
     setErrors({});
     try {
-      const res = await loginUser(form);
+      const res = await loginUser({ email: form.email.trim(), password: form.password });
       const { user, accessToken, refreshToken } = res.data.data;
       login(user, accessToken, refreshToken);
       toast.success(`Welcome back, ${user.name}! 🎉`);
       navigate(user.roles?.includes('ROLE_ADMIN') ? '/admin' : '/home');
     } catch (err) {
-      let msg = err.response?.data?.message;
-      if (!msg) {
-        if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
-          msg = 'Backend server is waking up from Render sleep (~30-50s). Please wait a few seconds and try again!';
-        } else if (!err.response) {
-          msg = `Cannot reach backend at ${API_BASE_URL}. If the backend is waking up on Render, please retry in a few seconds.`;
-        } else if (err.response.status === 502 || err.response.status === 503) {
-          msg = 'Backend server is starting up or temporarily unavailable on Render. Please retry in a few moments.';
-        } else if (err.response.status === 401 || err.response.status === 400) {
-          msg = 'Invalid email or password. Please verify credentials.';
-        } else {
-          msg = `Server error (${err.response.status}). Please check server logs.`;
-        }
+      const status = err.response?.status;
+      const rawMsg = err.response?.data?.message;
+      let msg = '';
+
+      if (
+        status === 401 ||
+        status === 400 ||
+        rawMsg?.toLowerCase().includes('unauthorized') ||
+        rawMsg?.toLowerCase().includes('bad credentials') ||
+        rawMsg?.toLowerCase().includes('invalid')
+      ) {
+        msg = 'Invalid email or password. Please verify credentials.';
+      } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+        msg = 'Backend server is waking up from Render sleep (~30-50s). Please wait a few seconds and try again!';
+      } else if (!err.response) {
+        msg = `Cannot reach backend at ${API_BASE_URL}. If the backend is waking up on Render, please retry in a few seconds.`;
+      } else if (status === 502 || status === 503) {
+        msg = 'Backend server is starting up or temporarily unavailable on Render. Please retry in a few moments.';
+      } else {
+        msg = rawMsg || `Server error (${status || 'error'}). Please check server logs.`;
       }
       toast.error(msg);
       setErrors({ general: msg });
@@ -67,9 +74,22 @@ const Login = () => {
     }
   };
 
-  const handleQuickFill = (email, password) => {
+  const handleQuickFill = async (email, password) => {
     setForm({ email, password });
     setErrors({});
+    // Perform instant 1-click login for demo buttons
+    setLoading(true);
+    try {
+      const res = await loginUser({ email: email.trim(), password });
+      const { user, accessToken, refreshToken } = res.data.data;
+      login(user, accessToken, refreshToken);
+      toast.success(`Welcome back, ${user.name}! 🎉`);
+      navigate(user.roles?.includes('ROLE_ADMIN') ? '/admin' : '/home');
+    } catch (err) {
+      toast.error('Demo login failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
