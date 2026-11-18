@@ -31,7 +31,7 @@ const Register = () => {
   const validate = () => {
     const errs = {};
     if (!form.name.trim()) errs.name = 'PLEASE ENTER YOUR FULL NAME';
-    else if (form.name.trim().length < 2) errs.name = 'NAME MUST BE AT LEAST 2 CHARACTERS';
+    else if (form.name.trim().length < 3) errs.name = 'NAME MUST BE AT LEAST 3 CHARACTERS';
     if (!form.email) errs.email = 'PLEASE ENTER YOUR EMAIL ADDRESS';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'PLEASE ENTER A VALID EMAIL FORMAT';
     if (!form.phone.trim()) errs.phone = 'PLEASE ENTER YOUR PHONE NUMBER';
@@ -56,7 +56,7 @@ const Register = () => {
     try {
       const payload = {
         name: form.name.trim(),
-        email: form.email.trim(),
+        email: form.email.trim().toLowerCase(),
         phone: form.phone.trim(),
         password: form.password,
       };

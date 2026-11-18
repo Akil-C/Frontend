@@ -37,6 +37,7 @@ const AdminFoods = lazy(() => import('./pages/admin/AdminFoods'));
 const AdminCategories = lazy(() => import('./pages/admin/AdminCategories'));
 const AdminOrders = lazy(() => import('./pages/admin/AdminOrders'));
 const AdminUsers = lazy(() => import('./pages/admin/AdminUsers'));
+const AdminTracking = lazy(() => import('./pages/admin/AdminTracking'));
 const AdminCoupons = lazy(() => import('./pages/admin/AdminCoupons'));
 
 const PageLoader = () => (
@@ -120,6 +121,9 @@ function App() {
                   } />
                   <Route path="/admin/users" element={
                     <ProtectedRoute adminOnly><AdminUsers /></ProtectedRoute>
+                  } />
+                  <Route path="/admin/tracking" element={
+                    <ProtectedRoute adminOnly><AdminTracking /></ProtectedRoute>
                   } />
                   <Route path="/admin/coupons" element={
                     <ProtectedRoute adminOnly><AdminCoupons /></ProtectedRoute>

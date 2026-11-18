@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { FiHome, FiTrendingUp, FiShoppingBag, FiLayers, FiList, FiUsers, FiTag, FiLogOut } from 'react-icons/fi';
+import { FiHome, FiTrendingUp, FiShoppingBag, FiLayers, FiList, FiUsers, FiTag, FiLogOut, FiShield } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -20,7 +20,8 @@ const AdminSidebar = ({ active }) => {
     { id: 'categories', label: 'Categories', icon: <FiLayers />, path: '/admin/categories' },
     { id: 'foods', label: 'Menu Items', icon: <FiList />, path: '/admin/foods' },
     { id: 'orders', label: 'Orders', icon: <FiShoppingBag />, path: '/admin/orders' },
-    { id: 'users', label: 'Users', icon: <FiUsers />, path: '/admin/users' },
+    { id: 'users', label: 'Users & Roles', icon: <FiUsers />, path: '/admin/users' },
+    { id: 'tracking', label: 'Security & Tracking', icon: <FiShield />, path: '/admin/tracking' },
     { id: 'coupons', label: 'Coupons', icon: <FiTag />, path: '/admin/coupons' },
   ];
 

@@ -67,6 +67,10 @@ export const addReview = (data) => api.post('/reviews', data);
 
 // Admin
 export const getAllUsers = (params) => api.get('/admin/users', { params });
+export const updateUserStatus = (id, active) => api.put(`/admin/users/${id}/status${active !== undefined ? `?active=${active}` : ''}`);
+export const updateUserRole = (id, role) => api.put(`/admin/users/${id}/role?role=${encodeURIComponent(role)}`);
+export const getUserLogins = (id) => api.get(`/admin/users/${id}/logins`);
+export const getLoginTrackingAudits = () => api.get('/admin/users/tracking/logins');
 export const getAllOrders = (params) => api.get('/admin/orders', { params });
 export const updateOrderStatus = (id, status) => api.put(`/admin/orders/${id}/status?status=${status}`);
 export const getDashboardStats = () => api.get('/admin/analytics/dashboard');
@@ -82,3 +86,4 @@ export const deleteCategory = (id) => api.delete(`/admin/categories/${id}`);
 export const createCoupon = (data) => api.post('/admin/coupons', data);
 export const updateCoupon = (id, data) => api.put(`/admin/coupons/${id}`, data);
 export const deleteCoupon = (id) => api.delete(`/admin/coupons/${id}`);
+
