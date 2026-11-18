@@ -1,7 +1,9 @@
 import axios from 'axios';
 
-// Default to live Render backend if VITE_API_BASE_URL is not set
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-1-snun.onrender.com/api';
+// Normalize API_BASE_URL: automatically append /api if user specified root domain without it
+const rawBaseUrl = import.meta.env.VITE_API_BASE_URL || 'https://backend-1-snun.onrender.com/api';
+const cleanBaseUrl = rawBaseUrl.replace(/\/+$/, '');
+export const API_BASE_URL = cleanBaseUrl.endsWith('/api') ? cleanBaseUrl : `${cleanBaseUrl}/api`;
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
