@@ -45,7 +45,18 @@ const Login = () => {
       toast.success(`Welcome back, ${user.name}! 🎉`);
       navigate(user.roles?.includes('ROLE_ADMIN') ? '/admin' : '/home');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Login failed. Please check your email and password.';
+      let msg = err.response?.data?.message;
+      if (!msg) {
+        if (!err.response) {
+          msg = 'Cannot connect to backend server. Please verify the backend is running on Render and VITE_API_BASE_URL is set.';
+        } else if (err.response.status === 502 || err.response.status === 503) {
+          msg = 'Backend server is starting up or crashed on Render (Check Render logs).';
+        } else if (err.response.status === 401 || err.response.status === 400) {
+          msg = 'Invalid email or password. Please verify credentials.';
+        } else {
+          msg = `Server error (${err.response.status}). Please check server logs.`;
+        }
+      }
       toast.error(msg);
       setErrors({ general: msg });
     } finally {

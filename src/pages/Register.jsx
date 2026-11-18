@@ -69,7 +69,16 @@ const Register = () => {
       toast.success(`Welcome to Prime Bites, ${user.name}! 🎉`);
       navigate('/home');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed. Please check your information.';
+      let msg = err.response?.data?.message;
+      if (!msg) {
+        if (!err.response) {
+          msg = 'Cannot connect to backend server. Please verify the backend is running on Render and VITE_API_BASE_URL is set.';
+        } else if (err.response.status === 502 || err.response.status === 503) {
+          msg = 'Backend server is starting up or crashed on Render (Check Render logs).';
+        } else {
+          msg = `Registration failed (${err.response?.status || 'error'}). Please try again.`;
+        }
+      }
       toast.error(msg);
       setErrors({ general: msg });
     } finally {
