@@ -1,38 +1,24 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiAlertCircle, FiCheckCircle } from 'react-icons/fi';
+import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { registerUser, loginUser } from '../services/apiService';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
-// Field component defined outside the Register component to prevent focus loss on typing
-const Field = ({ id, label, icon, type, name, placeholder, autoComplete, rightIcon, value, onChange, error }) => (
-  <div className="form-group">
-    <label className="form-label" htmlFor={id}>{label}</label>
-    <div style={{ position: 'relative' }}>
-      <span style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} aria-hidden="true">
-        {icon}
-      </span>
-      <input
-        id={id}
-        className={`form-input ${error ? 'error' : ''}`}
-        style={{ paddingLeft: '2.5rem', paddingRight: rightIcon ? '2.75rem' : undefined }}
-        type={type}
-        placeholder={placeholder}
-        value={value}
-        onChange={onChange}
-        autoComplete={autoComplete}
-        aria-describedby={error ? `${id}-error` : undefined}
-        aria-invalid={!!error}
-      />
-      {rightIcon}
-    </div>
-    {error && <p className="form-error" id={`${id}-error`} role="alert"><FiAlertCircle size={12} /> {error}</p>}
-  </div>
-);
+const REGISTER_PREVIEWS = [
+  'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1544025162-d76694265947?w=400&auto=format&fit=crop&q=80',
+  'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&auto=format&fit=crop&q=80',
+];
 
 const Register = () => {
-  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', confirmPassword: '' });
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
+    confirmPassword: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -43,37 +29,46 @@ const Register = () => {
 
   const validate = () => {
     const errs = {};
-    if (!form.name.trim()) errs.name = 'Full name is required';
-    else if (form.name.trim().length < 2) errs.name = 'Name must be at least 2 characters';
-    if (!form.email) errs.email = 'Email is required';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'Invalid email format';
-    if (form.phone && !/^\+?[0-9]{7,15}$/.test(form.phone.replace(/\s/g, ''))) errs.phone = 'Invalid phone number';
-    if (!form.password) errs.password = 'Password is required';
-    else if (form.password.length < 6) errs.password = 'Password must be at least 6 characters';
-    if (!form.confirmPassword) errs.confirmPassword = 'Please confirm your password';
-    else if (form.password !== form.confirmPassword) errs.confirmPassword = 'Passwords do not match';
+    if (!form.name.trim()) errs.name = 'FULL NAME IS REQUIRED';
+    else if (form.name.trim().length < 2) errs.name = 'NAME MUST BE AT LEAST 2 CHARACTERS';
+    if (!form.email) errs.email = 'EMAIL IS REQUIRED';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'INVALID EMAIL FORMAT';
+    if (form.phone && !/^\+?[0-9]{7,15}$/.test(form.phone.replace(/\s/g, '')))
+      errs.phone = 'INVALID PHONE NUMBER';
+    if (!form.password) errs.password = 'PASSWORD IS REQUIRED';
+    else if (form.password.length < 6) errs.password = 'MINIMUM 6 CHARACTERS REQUIRED';
+    if (!form.confirmPassword) errs.confirmPassword = 'PLEASE CONFIRM YOUR PASSWORD';
+    else if (form.password !== form.confirmPassword) errs.confirmPassword = 'PASSWORDS DO NOT MATCH';
     return errs;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
+    }
     setLoading(true);
     setErrors({});
     try {
-      const payload = { name: form.name, email: form.email, phone: form.phone, password: form.password };
+      const payload = {
+        name: form.name,
+        email: form.email,
+        phone: form.phone,
+        password: form.password,
+      };
       await registerUser(payload);
-      
+
       // Auto-login after successful registration
       const loginRes = await loginUser({ email: form.email, password: form.password });
       const { user, accessToken, refreshToken } = loginRes.data.data;
       login(user, accessToken, refreshToken);
-      
-      toast.success(`Welcome to PrimeBites, ${user.name}! 🎉`);
+
+      toast.success(`WELCOME TO PRIME BITES, ${user.name.toUpperCase()}!`);
       navigate('/home');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed. Please try again.';
+      const msg = err.response?.data?.message || 'Registration failed. Please check your details.';
       toast.error(msg);
       setErrors({ general: msg });
     } finally {
@@ -81,162 +76,250 @@ const Register = () => {
     }
   };
 
-  const PasswordStrength = ({ password }) => {
-    if (!password) return null;
-    const score = [password.length >= 8, /[A-Z]/.test(password), /[0-9]/.test(password), /[^A-Za-z0-9]/.test(password)].filter(Boolean).length;
-    const labels = ['', 'Weak', 'Fair', 'Good', 'Strong'];
-    const colors = ['', '#E23744', '#FC8019', '#FFB800', '#2EC4B6'];
-    return (
-      <div style={{ marginTop: '0.5rem' }}>
-        <div style={{ display: 'flex', gap: '4px' }}>
-          {[1,2,3,4].map(i => (
-            <div key={i} style={{ flex: 1, height: 4, borderRadius: 2, background: i <= score ? colors[score] : 'var(--color-border)', transition: 'background 0.3s' }} />
-          ))}
-        </div>
-        {score > 0 && <p style={{ fontSize: '0.75rem', color: colors[score], marginTop: '0.25rem' }}>{labels[score]} password</p>}
-      </div>
-    );
-  };
-
   return (
-    <div className="auth-container">
-      <div className="auth-left" aria-hidden="true">
-        <div style={{ textAlign: 'center', color: '#fff', position: 'relative', zIndex: 1 }}>
-          <div style={{ fontSize: '5rem', marginBottom: '1.5rem' }}>🍕</div>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '2.25rem', fontWeight: 800, marginBottom: '1rem' }}>
-            Join PrimeBites
-          </h2>
-          <p style={{ fontSize: '1rem', color: 'rgba(255,255,255,0.75)', maxWidth: 320, lineHeight: 1.7 }}>
-            Create your free account and enjoy amazing food from hundreds of restaurants near you.
-          </p>
-          <div style={{ marginTop: '2.5rem', display: 'flex', flexDirection: 'column', gap: '0.875rem', maxWidth: 280, margin: '2.5rem auto 0' }}>
-            {['✅ Free to join', '🎁 First order discount', '📍 Real-time tracking', '🛡️ Safe & Secure'].map(f => (
-              <div key={f} style={{ color: 'rgba(255,255,255,0.85)', fontSize: '0.9375rem' }}>{f}</div>
-            ))}
+    <div className="editorial-auth-wrapper">
+      <div className="editorial-auth-card">
+        {/* Left Editorial Showcase Panel */}
+        <div className="editorial-auth-showcase">
+          <div className="editorial-auth-showcase-bg-circle" />
+
+          {/* Logo */}
+          <Link to="/" className="editorial-auth-brand" aria-label="Prime Bites Home">
+            <span>-</span> PRIME BITES
+          </Link>
+
+          {/* Middle Hero */}
+          <div className="editorial-auth-hero-text">
+            <span className="editorial-auth-tagline">NEW PATRON ONBOARDING</span>
+            <h1 className="editorial-auth-headline">
+              JOIN THE<br />FELLOWSHIP.
+            </h1>
+            <p className="editorial-auth-desc">
+              Gain access to bespoke seasonal tastings, priority courier windows, and curated harvests
+              from our network of generational artisans.
+            </p>
+
+            {/* Micro gallery preview */}
+            <div className="editorial-auth-curated-preview">
+              {REGISTER_PREVIEWS.map((src, i) => (
+                <img
+                  key={i}
+                  src={src}
+                  alt="Curated preview"
+                  className="editorial-auth-img-thumb"
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Bottom Stats */}
+          <div className="editorial-auth-stats">
+            <div className="editorial-auth-stat-item">
+              <span className="editorial-auth-stat-num">500+</span>
+              <span className="editorial-auth-stat-label">CURATED ESTATES</span>
+            </div>
+            <div className="editorial-auth-stat-item">
+              <span className="editorial-auth-stat-num">25m</span>
+              <span className="editorial-auth-stat-label">DISPATCH SPEED</span>
+            </div>
+            <div className="editorial-auth-stat-item">
+              <span className="editorial-auth-stat-num">100%</span>
+              <span className="editorial-auth-stat-label">ORGANIC PROVENANCE</span>
+            </div>
           </div>
         </div>
-        <div style={{ position: 'absolute', top: '10%', right: '15%', width: 200, height: 200, borderRadius: '50%', background: 'rgba(252,128,25,0.1)', pointerEvents: 'none' }} />
-        <div style={{ position: 'absolute', bottom: '15%', left: '10%', width: 150, height: 150, borderRadius: '50%', background: 'rgba(226,55,68,0.1)', pointerEvents: 'none' }} />
-      </div>
 
-      <div className="auth-right" style={{ padding: '2rem 3rem', overflowY: 'auto' }}>
-        <div className="auth-form-box">
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontFamily: 'var(--font-heading)', fontSize: '1.25rem', fontWeight: 800, color: 'var(--color-primary)', marginBottom: '1.5rem' }}>
-            🍕 PrimeBites
-          </Link>
-          <h1 className="auth-title">Create Account</h1>
-          <p className="auth-subtitle">Sign up to start ordering great food</p>
+        {/* Right Form Panel */}
+        <div className="editorial-auth-form-side">
+          <div className="editorial-auth-form-header">
+            <span className="editorial-form-pretitle">BECOME A PATRON</span>
+            <h2 className="editorial-form-title">REGISTER</h2>
+            <p className="editorial-form-subtitle">BEGIN YOUR HAUTE GASTRONOMY JOURNEY</p>
+          </div>
 
           {errors.general && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.75rem 1rem', background: 'rgba(226,55,68,0.08)', borderRadius: '0.5rem', color: 'var(--color-error)', fontSize: '0.875rem', marginBottom: '1.25rem' }}>
-              <FiAlertCircle /> {errors.general}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.6rem',
+                padding: '0.9rem 1.25rem',
+                background: 'rgba(158, 42, 43, 0.08)',
+                borderRadius: '1rem',
+                color: '#9e2a2b',
+                fontFamily: 'Inter',
+                fontSize: '11px',
+                fontWeight: 700,
+                letterSpacing: '0.1em',
+                marginBottom: '1.5rem',
+                border: '1px solid rgba(158, 42, 43, 0.2)',
+              }}
+            >
+              <FiAlertCircle size={16} aria-hidden="true" />
+              <span>{errors.general.toUpperCase()}</span>
             </div>
           )}
 
           <form onSubmit={handleSubmit} noValidate aria-label="Registration form">
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <Field 
-                id="reg-name" 
-                label="Full Name" 
-                icon={<FiUser size={16} />} 
-                type="text" 
-                name="name" 
-                placeholder="John Doe" 
-                autoComplete="name"
-                value={form.name}
-                onChange={e => setForm(p => ({ ...p, name: e.target.value }))}
-                error={errors.name}
-              />
-              <Field 
-                id="reg-email" 
-                label="Email Address" 
-                icon={<FiMail size={16} />} 
-                type="email" 
-                name="email" 
-                placeholder="you@example.com" 
-                autoComplete="email"
-                value={form.email}
-                onChange={e => setForm(p => ({ ...p, email: e.target.value }))}
-                error={errors.email}
-              />
-              <Field 
-                id="reg-phone" 
-                label="Phone Number (Optional)" 
-                icon={<FiPhone size={16} />} 
-                type="tel" 
-                name="phone" 
-                placeholder="+91 98765 43210" 
-                autoComplete="tel"
-                value={form.phone}
-                onChange={e => setForm(p => ({ ...p, phone: e.target.value }))}
-                error={errors.phone}
-              />
-
-              {/* Password */}
-              <div className="form-group">
-                <label className="form-label" htmlFor="reg-password">Password</label>
-                <div style={{ position: 'relative' }}>
-                  <FiLock style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} aria-hidden="true" />
-                  <input
-                    id="reg-password"
-                    className={`form-input ${errors.password ? 'error' : ''}`}
-                    style={{ paddingLeft: '2.5rem', paddingRight: '2.75rem' }}
-                    type={showPassword ? 'text' : 'password'}
-                    placeholder="Minimum 6 characters"
-                    value={form.password}
-                    onChange={e => setForm(p => ({ ...p, password: e.target.value }))}
-                    autoComplete="new-password"
-                  />
-                  <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} onClick={() => setShowPassword(p => !p)} aria-label={showPassword ? 'Hide password' : 'Show password'}>
-                    {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-                  </button>
-                </div>
-                <PasswordStrength password={form.password} />
-                {errors.password && <p className="form-error" role="alert"><FiAlertCircle size={12} /> {errors.password}</p>}
+            {/* Full Name */}
+            <div className="editorial-input-group">
+              <label className="editorial-input-label" htmlFor="register-name">
+                FULL NAME
+              </label>
+              <div className="editorial-input-wrap">
+                <FiUser className="editorial-input-icon" aria-hidden="true" />
+                <input
+                  id="register-name"
+                  className={`editorial-text-input ${errors.name ? 'error' : ''}`}
+                  type="text"
+                  placeholder="ALEXANDRA DU PONT"
+                  value={form.name}
+                  onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                  autoComplete="name"
+                  aria-invalid={!!errors.name}
+                />
               </div>
-
-              {/* Confirm Password */}
-              <div className="form-group">
-                <label className="form-label" htmlFor="reg-confirm">Confirm Password</label>
-                <div style={{ position: 'relative' }}>
-                  <FiLock style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} aria-hidden="true" />
-                  <input
-                    id="reg-confirm"
-                    className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
-                    style={{ paddingLeft: '2.5rem', paddingRight: '2.75rem' }}
-                    type={showConfirm ? 'text' : 'password'}
-                    placeholder="Repeat your password"
-                    value={form.confirmPassword}
-                    onChange={e => setForm(p => ({ ...p, confirmPassword: e.target.value }))}
-                    autoComplete="new-password"
-                  />
-                  <button type="button" style={{ position: 'absolute', right: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} onClick={() => setShowConfirm(p => !p)} aria-label={showConfirm ? 'Hide password' : 'Show password'}>
-                    {showConfirm ? <FiEyeOff size={18} /> : <FiEye size={18} />}
-                  </button>
+              {errors.name && (
+                <div className="editorial-input-error" role="alert">
+                  <FiAlertCircle size={12} /> {errors.name}
                 </div>
-                {form.confirmPassword && form.password === form.confirmPassword && (
-                  <p style={{ fontSize: '0.75rem', color: 'var(--color-accent)', display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.25rem' }}>
-                    <FiCheckCircle size={12} /> Passwords match
-                  </p>
-                )}
-                {errors.confirmPassword && <p className="form-error" role="alert"><FiAlertCircle size={12} /> {errors.confirmPassword}</p>}
-              </div>
-
-              <button
-                id="register-submit"
-                type="submit"
-                className="btn btn-primary w-full"
-                style={{ padding: '0.875rem', fontSize: '1rem', marginTop: '0.25rem' }}
-                disabled={loading}
-              >
-                {loading ? <><span className="spinner spinner-sm" /> Creating account...</> : 'Create Account 🚀'}
-              </button>
+              )}
             </div>
+
+            {/* Email */}
+            <div className="editorial-input-group">
+              <label className="editorial-input-label" htmlFor="register-email">
+                CORRESPONDENCE EMAIL
+              </label>
+              <div className="editorial-input-wrap">
+                <FiMail className="editorial-input-icon" aria-hidden="true" />
+                <input
+                  id="register-email"
+                  className={`editorial-text-input ${errors.email ? 'error' : ''}`}
+                  type="email"
+                  placeholder="PATRON@ESTATE.COM"
+                  value={form.email}
+                  onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
+                  autoComplete="email"
+                  aria-invalid={!!errors.email}
+                />
+              </div>
+              {errors.email && (
+                <div className="editorial-input-error" role="alert">
+                  <FiAlertCircle size={12} /> {errors.email}
+                </div>
+              )}
+            </div>
+
+            {/* Phone */}
+            <div className="editorial-input-group">
+              <label className="editorial-input-label" htmlFor="register-phone">
+                CONCIERGE CONTACT (PHONE)
+              </label>
+              <div className="editorial-input-wrap">
+                <FiPhone className="editorial-input-icon" aria-hidden="true" />
+                <input
+                  id="register-phone"
+                  className={`editorial-text-input ${errors.phone ? 'error' : ''}`}
+                  type="tel"
+                  placeholder="+1 (555) 000-8888"
+                  value={form.phone}
+                  onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+                  autoComplete="tel"
+                  aria-invalid={!!errors.phone}
+                />
+              </div>
+              {errors.phone && (
+                <div className="editorial-input-error" role="alert">
+                  <FiAlertCircle size={12} /> {errors.phone}
+                </div>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="editorial-input-group">
+              <label className="editorial-input-label" htmlFor="register-password">
+                ACCESS KEY CODE
+              </label>
+              <div className="editorial-input-wrap">
+                <FiLock className="editorial-input-icon" aria-hidden="true" />
+                <input
+                  id="register-password"
+                  className={`editorial-text-input ${errors.password ? 'error' : ''}`}
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="MINIMUM 6 CHARACTERS"
+                  value={form.password}
+                  onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
+                  autoComplete="new-password"
+                  aria-invalid={!!errors.password}
+                />
+                <button
+                  type="button"
+                  className="editorial-password-toggle"
+                  onClick={() => setShowPassword((p) => !p)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                </button>
+              </div>
+              {errors.password && (
+                <div className="editorial-input-error" role="alert">
+                  <FiAlertCircle size={12} /> {errors.password}
+                </div>
+              )}
+            </div>
+
+            {/* Confirm Password */}
+            <div className="editorial-input-group">
+              <label className="editorial-input-label" htmlFor="register-confirm">
+                CONFIRM KEY CODE
+              </label>
+              <div className="editorial-input-wrap">
+                <FiLock className="editorial-input-icon" aria-hidden="true" />
+                <input
+                  id="register-confirm"
+                  className={`editorial-text-input ${errors.confirmPassword ? 'error' : ''}`}
+                  type={showConfirm ? 'text' : 'password'}
+                  placeholder="RE-ENTER KEY CODE"
+                  value={form.confirmPassword}
+                  onChange={(e) => setForm((p) => ({ ...p, confirmPassword: e.target.value }))}
+                  autoComplete="new-password"
+                  aria-invalid={!!errors.confirmPassword}
+                />
+                <button
+                  type="button"
+                  className="editorial-password-toggle"
+                  onClick={() => setShowConfirm((p) => !p)}
+                  aria-label={showConfirm ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirm ? <FiEyeOff size={16} /> : <FiEye size={16} />}
+                </button>
+              </div>
+              {errors.confirmPassword && (
+                <div className="editorial-input-error" role="alert">
+                  <FiAlertCircle size={12} /> {errors.confirmPassword}
+                </div>
+              )}
+            </div>
+
+            {/* Submit Button */}
+            <button
+              id="register-submit"
+              type="submit"
+              className="editorial-auth-submit-btn"
+              disabled={loading}
+            >
+              {loading ? 'ENROLLING...' : 'ENROLL AS PATRON →'}
+            </button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: '1.25rem', fontSize: '0.875rem', color: 'var(--color-text-secondary)' }}>
-            Already have an account? <Link to="/login" className="auth-link">Sign in</Link>
-          </p>
+          {/* Link to Login */}
+          <div className="editorial-auth-switch">
+            <span>ALREADY A PATRON?</span>
+            <Link to="/login" className="editorial-auth-switch-link">
+              SIGN IN
+            </Link>
+          </div>
         </div>
       </div>
     </div>
