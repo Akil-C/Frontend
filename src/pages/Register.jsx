@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FiUser, FiMail, FiPhone, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { registerUser, loginUser } from '../services/apiService';
+import { API_BASE_URL } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 
@@ -71,10 +72,12 @@ const Register = () => {
     } catch (err) {
       let msg = err.response?.data?.message;
       if (!msg) {
-        if (!err.response) {
-          msg = 'Cannot connect to backend server. Please verify the backend is running on Render and VITE_API_BASE_URL is set.';
+        if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
+          msg = 'Backend server is waking up from Render sleep (~30-50s). Please wait a few seconds and try again!';
+        } else if (!err.response) {
+          msg = `Cannot reach backend at ${API_BASE_URL}. If the backend is waking up on Render, please retry in a few seconds.`;
         } else if (err.response.status === 502 || err.response.status === 503) {
-          msg = 'Backend server is starting up or crashed on Render (Check Render logs).';
+          msg = 'Backend server is starting up or temporarily unavailable on Render. Please retry in a few moments.';
         } else {
           msg = `Registration failed (${err.response?.status || 'error'}). Please try again.`;
         }

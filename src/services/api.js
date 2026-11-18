@@ -1,10 +1,11 @@
 import axios from 'axios';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
+// Default to live Render backend if VITE_API_BASE_URL is not set
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://backend-1-snun.onrender.com/api';
 
 const axiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 15000,
+  timeout: 60000, // 60s timeout to allow Render free tier cold-start wakeups (takes 30-50s)
   headers: {
     'Content-Type': 'application/json',
   },
