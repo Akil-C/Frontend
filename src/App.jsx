@@ -66,6 +66,10 @@ function App() {
                 <Routes>
                   {/* Public routes */}
                   <Route path="/" element={<MainLayout><Landing /></MainLayout>} />
+                  <Route path="/home" element={<MainLayout><Home /></MainLayout>} />
+                  <Route path="/search" element={<MainLayout><Search /></MainLayout>} />
+                  <Route path="/restaurants/:id" element={<MainLayout><RestaurantDetails /></MainLayout>} />
+                  <Route path="/select-location" element={<MainLayout><SelectLocation /></MainLayout>} />
                   <Route path="/login" element={<Login />} />
                   <Route path="/register" element={<Register />} />
                   <Route path="/about" element={<MainLayout><About /></MainLayout>} />
@@ -73,14 +77,6 @@ function App() {
                   <Route path="/offers" element={<MainLayout><Offers /></MainLayout>} />
 
                   {/* Protected User routes */}
-                  <Route path="/select-location" element={
-                    <ProtectedRoute><MainLayout><SelectLocation /></MainLayout></ProtectedRoute>
-                  } />
-                  <Route path="/home" element={
-                    <ProtectedRoute><MainLayout><Home /></MainLayout></ProtectedRoute>
-                  } />
-                  <Route path="/search" element={<MainLayout><Search /></MainLayout>} />
-                  <Route path="/restaurants/:id" element={<MainLayout><RestaurantDetails /></MainLayout>} />
                   <Route path="/cart" element={
                     <ProtectedRoute><MainLayout showFooter={false}><Cart /></MainLayout></ProtectedRoute>
                   } />

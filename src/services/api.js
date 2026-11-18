@@ -47,17 +47,13 @@ axiosInstance.interceptors.response.use(
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
           return axiosInstance(originalRequest);
         } catch (_err) {
-          // Refresh failed — force logout
-          localStorage.clear();
-          if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
-            window.location.href = '/login';
-          }
+          // Refresh failed — clear invalid tokens without hijacking user's current page
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
         }
       } else {
-        localStorage.clear();
-        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
-          window.location.href = '/login';
-        }
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
       }
     }
 
