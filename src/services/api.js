@@ -14,9 +14,12 @@ const axiosInstance = axios.create({
 // Request interceptor — inject JWT token from localStorage
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    // Never send Authorization header for login, register, or refresh endpoints
+    if (!config.url?.includes('/auth/')) {
+      const token = localStorage.getItem('accessToken');
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
     }
     return config;
   },

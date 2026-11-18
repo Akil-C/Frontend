@@ -63,7 +63,9 @@ const Register = () => {
       await registerUser(payload);
 
       // Auto-login after successful registration
-      const loginRes = await loginUser({ email: form.email.trim(), password: form.password });
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      const loginRes = await loginUser({ email: form.email.trim().toLowerCase(), password: form.password });
       const { user, accessToken, refreshToken } = loginRes.data.data;
       login(user, accessToken, refreshToken);
 

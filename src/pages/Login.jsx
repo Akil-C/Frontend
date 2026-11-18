@@ -30,17 +30,16 @@ const Login = () => {
     return errs;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const errs = validate();
-    if (Object.keys(errs).length) {
-      setErrors(errs);
-      return;
-    }
+  const performLogin = async (email, password) => {
+    if (loading) return;
     setLoading(true);
     setErrors({});
     try {
-      const res = await loginUser({ email: form.email.trim(), password: form.password });
+      // Clear any stale tokens before authenticating
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+
+      const res = await loginUser({ email: email.trim().toLowerCase(), password });
       const { user, accessToken, refreshToken } = res.data.data;
       login(user, accessToken, refreshToken);
       toast.success(`Welcome back, ${user.name}! 🎉`);
@@ -50,22 +49,16 @@ const Login = () => {
       const rawMsg = err.response?.data?.message;
       let msg = '';
 
-      if (
-        status === 401 ||
-        status === 400 ||
-        rawMsg?.toLowerCase().includes('unauthorized') ||
-        rawMsg?.toLowerCase().includes('bad credentials') ||
-        rawMsg?.toLowerCase().includes('invalid')
-      ) {
-        msg = 'Invalid email or password. Please verify credentials.';
+      if (status === 400 || status === 401) {
+        msg = rawMsg || 'Invalid email or password. Please verify credentials.';
       } else if (err.code === 'ECONNABORTED' || err.message?.includes('timeout')) {
         msg = 'Backend server is waking up from Render sleep (~30-50s). Please wait a few seconds and try again!';
       } else if (!err.response) {
-        msg = `Cannot reach backend at ${API_BASE_URL}. If the backend is waking up on Render, please retry in a few seconds.`;
+        msg = `Cannot reach backend at ${API_BASE_URL}. If waking up on Render, please retry in a few seconds.`;
       } else if (status === 502 || status === 503) {
-        msg = 'Backend server is starting up or temporarily unavailable on Render. Please retry in a few moments.';
+        msg = 'Backend server is restarting or deploying on Render. Please wait a few seconds and retry.';
       } else {
-        msg = rawMsg || `Server error (${status || 'error'}). Please check server logs.`;
+        msg = rawMsg || `Login failed (${status || 'error'}). Please try again.`;
       }
       toast.error(msg);
       setErrors({ general: msg });
@@ -74,22 +67,19 @@ const Login = () => {
     }
   };
 
-  const handleQuickFill = async (email, password) => {
-    setForm({ email, password });
-    setErrors({});
-    // Perform instant 1-click login for demo buttons
-    setLoading(true);
-    try {
-      const res = await loginUser({ email: email.trim(), password });
-      const { user, accessToken, refreshToken } = res.data.data;
-      login(user, accessToken, refreshToken);
-      toast.success(`Welcome back, ${user.name}! 🎉`);
-      navigate(user.roles?.includes('ROLE_ADMIN') ? '/admin' : '/home');
-    } catch (err) {
-      toast.error('Demo login failed. Please try again.');
-    } finally {
-      setLoading(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const errs = validate();
+    if (Object.keys(errs).length) {
+      setErrors(errs);
+      return;
     }
+    performLogin(form.email, form.password);
+  };
+
+  const handleQuickFill = (email, password) => {
+    setForm({ email, password });
+    performLogin(email, password);
   };
 
   return (
