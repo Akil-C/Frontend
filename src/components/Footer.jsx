@@ -10,7 +10,7 @@ const Footer = () => {
   const handleSubscribe = (e) => {
     e.preventDefault();
     if (email.trim()) {
-      toast.success('SUBSCRIBED TO THE EDITORIAL GAZETTE');
+      toast.success('THANK YOU FOR SUBSCRIBING TO OUR OFFERS!');
       setEmail('');
     }
   };
@@ -18,65 +18,65 @@ const Footer = () => {
   return (
     <footer className="editorial-footer" role="contentinfo">
       <div className="editorial-footer-grid">
-        {/* Left 6 cols: Large newsletter signup with uppercase underline-only input field */}
+        {/* Left 6 cols: Newsletter signup */}
         <div className="editorial-footer-newsletter">
           <h2 className="editorial-footer-headline">
-            THE GASTRONOMIC<br />DISPATCH
+            SPECIAL OFFERS<br />& UPDATES
           </h2>
           <p className="editorial-newsletter-desc">
-            Receive exclusive invitations to seasonal tastings, secret supper clubs, and curated menus
-            crafted by our network of master artisans and foragers.
+            Subscribe to our newsletter for weekly discount coupons, newly added restaurants,
+            and exclusive food delivery deals.
           </p>
           <form className="editorial-newsletter-form" onSubmit={handleSubscribe}>
             <input
               type="email"
               className="editorial-newsletter-input"
-              placeholder="ENTER YOUR EMAIL FOR CORRESPONDENCE"
+              placeholder="ENTER YOUR EMAIL FOR DEALS"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
             />
             <button type="submit" className="editorial-newsletter-submit">
-              JOIN
+              SUBSCRIBE
             </button>
           </form>
         </div>
 
-        {/* Right 6 cols: Two columns of links using bold, tracked-out 11px uppercase text */}
+        {/* Right 6 cols: Two columns of helpful links */}
         <div className="editorial-footer-links-wrap">
           <div>
-            <div className="editorial-footer-col-title">CURATION</div>
+            <div className="editorial-footer-col-title">ORDER FOOD</div>
             <ul className="editorial-footer-link-list">
-              <li><Link to="/home" className="editorial-footer-link">SIGNATURE MENUS</Link></li>
-              <li><Link to="/about" className="editorial-footer-link">PROVENANCE & ORIGIN</Link></li>
-              <li><Link to="/offers" className="editorial-footer-link">SEASONAL SPECIALS</Link></li>
-              <li><Link to="/search" className="editorial-footer-link">ESTATE DIRECTORY</Link></li>
-              <li><Link to="/help" className="editorial-footer-link">CONCIERGE DESK</Link></li>
+              <li><Link to="/home" className="editorial-footer-link">EXPLORE MENU</Link></li>
+              <li><Link to="/offers" className="editorial-footer-link">SPECIAL OFFERS</Link></li>
+              <li><Link to="/search" className="editorial-footer-link">SEARCH RESTAURANTS</Link></li>
+              <li><Link to="/orders" className="editorial-footer-link">TRACK ORDERS</Link></li>
+              <li><Link to="/help" className="editorial-footer-link">HELP & SUPPORT</Link></li>
             </ul>
           </div>
 
           <div>
-            <div className="editorial-footer-col-title">INSTITUTION</div>
+            <div className="editorial-footer-col-title">ABOUT US</div>
             <ul className="editorial-footer-link-list">
-              <li><a href="#manifesto" className="editorial-footer-link">OUR MANIFESTO</a></li>
-              <li><a href="#artisan" className="editorial-footer-link">BECOME AN ARTISAN</a></li>
-              <li><a href="#press" className="editorial-footer-link">PRESS ARCHIVE</a></li>
-              <li><a href="#sustainability" className="editorial-footer-link">REGENERATIVE PLEDGE</a></li>
-              <li><a href="#careers" className="editorial-footer-link">CULINARY FELLOWSHIPS</a></li>
+              <li><Link to="/about" className="editorial-footer-link">OUR STORY</Link></li>
+              <li><a href="#partner" className="editorial-footer-link">PARTNER WITH US</a></li>
+              <li><a href="#rider" className="editorial-footer-link">BECOME A RIDER</a></li>
+              <li><a href="#careers" className="editorial-footer-link">CAREERS</a></li>
+              <li><Link to="/help" className="editorial-footer-link">CONTACT SUPPORT</Link></li>
             </ul>
           </div>
         </div>
       </div>
 
-      {/* Bottom: Copyright and legal links with 30% opacity */}
+      {/* Bottom: Copyright and legal links */}
       <div className="editorial-footer-bottom">
         <div>
-          © {currentYear} PRIME BITES EDITORIAL GASTRONOMY. ALL RIGHTS RESERVED.
+          © {currentYear} PRIME BITES FOOD DELIVERY. ALL RIGHTS RESERVED.
         </div>
         <div className="editorial-footer-legal-links">
           <a href="#terms">TERMS OF SERVICE</a>
-          <a href="#privacy">PRIVACY DIRECTIVE</a>
-          <a href="#cookie">COOKIE PROTOCOL</a>
+          <a href="#privacy">PRIVACY POLICY</a>
+          <a href="#cookie">COOKIE SETTINGS</a>
         </div>
       </div>
     </footer>

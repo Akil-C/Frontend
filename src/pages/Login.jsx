@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiMail, FiLock, FiEye, FiEyeOff, FiAlertCircle, FiArrowRight } from 'react-icons/fi';
+import { FiMail, FiLock, FiEye, FiEyeOff, FiAlertCircle } from 'react-icons/fi';
 import { loginUser } from '../services/apiService';
 import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
@@ -22,10 +22,10 @@ const Login = () => {
 
   const validate = () => {
     const errs = {};
-    if (!form.email) errs.email = 'EMAIL IS REQUIRED';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'INVALID EMAIL FORMAT';
-    if (!form.password) errs.password = 'PASSWORD IS REQUIRED';
-    else if (form.password.length < 6) errs.password = 'MINIMUM 6 CHARACTERS REQUIRED';
+    if (!form.email) errs.email = 'PLEASE ENTER YOUR EMAIL ADDRESS';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'PLEASE ENTER A VALID EMAIL FORMAT';
+    if (!form.password) errs.password = 'PLEASE ENTER YOUR PASSWORD';
+    else if (form.password.length < 6) errs.password = 'PASSWORD MUST BE AT LEAST 6 CHARACTERS';
     return errs;
   };
 
@@ -42,10 +42,10 @@ const Login = () => {
       const res = await loginUser(form);
       const { user, accessToken, refreshToken } = res.data.data;
       login(user, accessToken, refreshToken);
-      toast.success(`WELCOME BACK, ${user.name.toUpperCase()}!`);
+      toast.success(`Welcome back, ${user.name}! 🎉`);
       navigate(user.roles?.includes('ROLE_ADMIN') ? '/admin' : '/home');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Authentication failed. Please verify your credentials.';
+      const msg = err.response?.data?.message || 'Login failed. Please check your email and password.';
       toast.error(msg);
       setErrors({ general: msg });
     } finally {
@@ -61,7 +61,7 @@ const Login = () => {
   return (
     <div className="editorial-auth-wrapper">
       <div className="editorial-auth-card">
-        {/* Left Editorial Showcase Panel */}
+        {/* Left Showcase Panel */}
         <div className="editorial-auth-showcase">
           <div className="editorial-auth-showcase-bg-circle" />
 
@@ -72,22 +72,22 @@ const Login = () => {
 
           {/* Middle Hero */}
           <div className="editorial-auth-hero-text">
-            <span className="editorial-auth-tagline">PATRON ACCESS PORTAL</span>
+            <span className="editorial-auth-tagline">FAST FOOD DELIVERY</span>
             <h1 className="editorial-auth-headline">
-              SAVOR THE<br />TERROIR.
+              HUNGRY?<br />ORDER NOW.
             </h1>
             <p className="editorial-auth-desc">
-              Curated gastronomy from Michelin-caliber kitchens, regenerative biodynamic estates, and
-              private cellars, delivered with immaculate dispatch.
+              Enjoy freshly cooked meals from top local restaurants, delivered hot and fast
+              right to your doorstep.
             </p>
 
-            {/* Micro gallery preview */}
+            {/* Food gallery preview */}
             <div className="editorial-auth-curated-preview">
               {LOGIN_PREVIEWS.map((src, i) => (
                 <img
                   key={i}
                   src={src}
-                  alt="Curated plate"
+                  alt="Popular dish"
                   className="editorial-auth-img-thumb"
                 />
               ))}
@@ -98,15 +98,15 @@ const Login = () => {
           <div className="editorial-auth-stats">
             <div className="editorial-auth-stat-item">
               <span className="editorial-auth-stat-num">500+</span>
-              <span className="editorial-auth-stat-label">CURATED ESTATES</span>
+              <span className="editorial-auth-stat-label">RESTAURANTS</span>
             </div>
             <div className="editorial-auth-stat-item">
-              <span className="editorial-auth-stat-num">25m</span>
-              <span className="editorial-auth-stat-label">DISPATCH SPEED</span>
+              <span className="editorial-auth-stat-num">30 MIN</span>
+              <span className="editorial-auth-stat-label">AVG. DELIVERY</span>
             </div>
             <div className="editorial-auth-stat-item">
               <span className="editorial-auth-stat-num">100%</span>
-              <span className="editorial-auth-stat-label">ORGANIC PROVENANCE</span>
+              <span className="editorial-auth-stat-label">FRESH & SAFE</span>
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ const Login = () => {
           <div className="editorial-auth-form-header">
             <span className="editorial-form-pretitle">WELCOME BACK</span>
             <h2 className="editorial-form-title">SIGN IN</h2>
-            <p className="editorial-form-subtitle">ENTER YOUR GASTRONOMIC CREDENTIALS</p>
+            <p className="editorial-form-subtitle">ENTER YOUR EMAIL AND PASSWORD TO CONTINUE</p>
           </div>
 
           {errors.general && (
@@ -132,13 +132,13 @@ const Login = () => {
                 fontFamily: 'Inter',
                 fontSize: '11px',
                 fontWeight: 700,
-                letterSpacing: '0.1em',
+                letterSpacing: '0.05em',
                 marginBottom: '1.5rem',
                 border: '1px solid rgba(158, 42, 43, 0.2)',
               }}
             >
               <FiAlertCircle size={16} aria-hidden="true" />
-              <span>{errors.general.toUpperCase()}</span>
+              <span>{errors.general}</span>
             </div>
           )}
 
@@ -146,7 +146,7 @@ const Login = () => {
             {/* Email Field */}
             <div className="editorial-input-group">
               <label className="editorial-input-label" htmlFor="login-email">
-                CORRESPONDENCE EMAIL
+                EMAIL ADDRESS
               </label>
               <div className="editorial-input-wrap">
                 <FiMail className="editorial-input-icon" aria-hidden="true" />
@@ -154,7 +154,7 @@ const Login = () => {
                   id="login-email"
                   className={`editorial-text-input ${errors.email ? 'error' : ''}`}
                   type="email"
-                  placeholder="PATRON@ESTATE.COM"
+                  placeholder="name@example.com"
                   value={form.email}
                   onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                   autoComplete="email"
@@ -171,7 +171,7 @@ const Login = () => {
             {/* Password Field */}
             <div className="editorial-input-group">
               <label className="editorial-input-label" htmlFor="login-password">
-                ACCESS KEY CODE
+                PASSWORD
               </label>
               <div className="editorial-input-wrap">
                 <FiLock className="editorial-input-icon" aria-hidden="true" />
@@ -179,7 +179,7 @@ const Login = () => {
                   id="login-password"
                   className={`editorial-text-input ${errors.password ? 'error' : ''}`}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="••••••••••••"
+                  placeholder="Enter your password"
                   value={form.password}
                   onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
                   autoComplete="current-password"
@@ -208,36 +208,36 @@ const Login = () => {
               className="editorial-auth-submit-btn"
               disabled={loading}
             >
-              {loading ? 'AUTHENTICATING...' : 'ENTER DISPATCH →'}
+              {loading ? 'SIGNING IN...' : 'SIGN IN TO ORDER →'}
             </button>
           </form>
 
           {/* Quick Fill Demo Badges */}
           <div className="editorial-demo-strip">
-            <span className="editorial-demo-title">TEST CREDENTIALS (CLICK TO FILL)</span>
+            <span className="editorial-demo-title">DEMO TEST ACCOUNTS (CLICK TO AUTO-FILL)</span>
             <div className="editorial-demo-pills">
               <button
                 type="button"
                 className="editorial-demo-pill"
                 onClick={() => handleQuickFill('admin@fooddelivery.com', 'password')}
               >
-                ADMIN PATRON
+                ADMIN DEMO
               </button>
               <button
                 type="button"
                 className="editorial-demo-pill"
                 onClick={() => handleQuickFill('john@gmail.com', 'password')}
               >
-                MEMBER PATRON
+                CUSTOMER DEMO
               </button>
             </div>
           </div>
 
           {/* Link to Register */}
           <div className="editorial-auth-switch">
-            <span>NEW PATRON?</span>
+            <span>DON'T HAVE AN ACCOUNT?</span>
             <Link to="/register" className="editorial-auth-switch-link">
-              REQUEST MEMBERSHIP
+              CREATE ONE FREE
             </Link>
           </div>
         </div>

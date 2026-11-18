@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { FiShoppingCart, FiUser, FiSearch, FiLogOut, FiSettings } from 'react-icons/fi';
+import { FiUser, FiLogOut } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { useToast } from '../context/ToastContext';
@@ -22,17 +22,17 @@ const Navbar = () => {
   return (
     <header className="editorial-navbar" role="banner">
       <div className="editorial-navbar-inner">
-        {/* Left: Logo in bold uppercase with a hyphen prefix */}
+        {/* Left: Logo */}
         <Link to="/" className="editorial-brand-logo" aria-label="Prime Bites Home">
           <span>-</span> PRIME BITES
         </Link>
 
-        {/* Center: Pill-shaped navigation bar with blur and semi-transparent background */}
-        <nav className="editorial-pill-nav" aria-label="Primary Navigation">
+        {/* Center: Pill-shaped navigation bar */}
+        <nav className="editorial-pill-nav" aria-label="Main Navigation">
           <Link to="/" className="editorial-nav-link">HOME</Link>
           <Link to="/home" className="editorial-nav-link">MENU</Link>
           <Link to="/offers" className="editorial-nav-link">OFFERS</Link>
-          <Link to="/about" className="editorial-nav-link">ORIGIN</Link>
+          <Link to="/about" className="editorial-nav-link">ABOUT</Link>
           <Link to="/search" className="editorial-nav-link">SEARCH</Link>
           {isAdmin && (
             <Link to="/admin" className="editorial-nav-link" style={{ color: '#c27803' }}>
@@ -47,12 +47,12 @@ const Navbar = () => {
             <div style={{ position: 'relative' }}>
               <button
                 className="editorial-pill-btn"
-                onClick={() => setUserDropdown(p => !p)}
+                onClick={() => setUserDropdown((p) => !p)}
                 aria-label="User account menu"
                 aria-expanded={userDropdown}
               >
-                <FiUser size={12} />
-                <span>{user.name?.split(' ')[0] || 'ACCOUNT'}</span>
+                <FiUser size={13} />
+                <span>{user.name?.split(' ')[0]?.toUpperCase() || 'ACCOUNT'}</span>
               </button>
               {userDropdown && (
                 <div
@@ -69,7 +69,7 @@ const Navbar = () => {
                     flexDirection: 'column',
                     gap: '0.5rem',
                     zIndex: 100,
-                    border: '1px solid rgba(1, 71, 46, 0.1)'
+                    border: '1px solid rgba(1, 71, 46, 0.1)',
                   }}
                 >
                   <Link
@@ -84,7 +84,7 @@ const Navbar = () => {
                       color: '#01472e',
                       padding: '0.5rem 0.75rem',
                       borderRadius: '0.75rem',
-                      textDecoration: 'none'
+                      textDecoration: 'none',
                     }}
                   >
                     Profile
@@ -101,10 +101,10 @@ const Navbar = () => {
                       color: '#01472e',
                       padding: '0.5rem 0.75rem',
                       borderRadius: '0.75rem',
-                      textDecoration: 'none'
+                      textDecoration: 'none',
                     }}
                   >
-                    Orders
+                    My Orders
                   </Link>
                   {isAdmin && (
                     <Link
@@ -119,7 +119,7 @@ const Navbar = () => {
                         color: '#c27803',
                         padding: '0.5rem 0.75rem',
                         borderRadius: '0.75rem',
-                        textDecoration: 'none'
+                        textDecoration: 'none',
                       }}
                     >
                       Admin Panel
@@ -139,7 +139,7 @@ const Navbar = () => {
                       textAlign: 'left',
                       background: 'none',
                       border: 'none',
-                      cursor: 'pointer'
+                      cursor: 'pointer',
                     }}
                   >
                     Sign Out
@@ -153,7 +153,7 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Cart button with a numeric counter badge in a white pill */}
+          {/* Cart button with a numeric counter badge */}
           <Link to="/cart" className="editorial-cart-white-pill" aria-label={`Cart with ${cartCount} items`}>
             <span>CART</span>
             <span className="editorial-cart-count-badge">{cartCount}</span>

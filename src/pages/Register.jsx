@@ -29,14 +29,15 @@ const Register = () => {
 
   const validate = () => {
     const errs = {};
-    if (!form.name.trim()) errs.name = 'FULL NAME IS REQUIRED';
+    if (!form.name.trim()) errs.name = 'PLEASE ENTER YOUR FULL NAME';
     else if (form.name.trim().length < 2) errs.name = 'NAME MUST BE AT LEAST 2 CHARACTERS';
-    if (!form.email) errs.email = 'EMAIL IS REQUIRED';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'INVALID EMAIL FORMAT';
-    if (form.phone && !/^\+?[0-9]{7,15}$/.test(form.phone.replace(/\s/g, '')))
-      errs.phone = 'INVALID PHONE NUMBER';
-    if (!form.password) errs.password = 'PASSWORD IS REQUIRED';
-    else if (form.password.length < 6) errs.password = 'MINIMUM 6 CHARACTERS REQUIRED';
+    if (!form.email) errs.email = 'PLEASE ENTER YOUR EMAIL ADDRESS';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) errs.email = 'PLEASE ENTER A VALID EMAIL FORMAT';
+    if (!form.phone.trim()) errs.phone = 'PLEASE ENTER YOUR PHONE NUMBER';
+    else if (form.phone.replace(/[^0-9]/g, '').length < 7)
+      errs.phone = 'PLEASE ENTER A VALID PHONE NUMBER (AT LEAST 7 DIGITS)';
+    if (!form.password) errs.password = 'PLEASE ENTER A PASSWORD';
+    else if (form.password.length < 6) errs.password = 'PASSWORD MUST BE AT LEAST 6 CHARACTERS';
     if (!form.confirmPassword) errs.confirmPassword = 'PLEASE CONFIRM YOUR PASSWORD';
     else if (form.password !== form.confirmPassword) errs.confirmPassword = 'PASSWORDS DO NOT MATCH';
     return errs;
@@ -53,22 +54,22 @@ const Register = () => {
     setErrors({});
     try {
       const payload = {
-        name: form.name,
-        email: form.email,
-        phone: form.phone,
+        name: form.name.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
         password: form.password,
       };
       await registerUser(payload);
 
       // Auto-login after successful registration
-      const loginRes = await loginUser({ email: form.email, password: form.password });
+      const loginRes = await loginUser({ email: form.email.trim(), password: form.password });
       const { user, accessToken, refreshToken } = loginRes.data.data;
       login(user, accessToken, refreshToken);
 
-      toast.success(`WELCOME TO PRIME BITES, ${user.name.toUpperCase()}!`);
+      toast.success(`Welcome to Prime Bites, ${user.name}! 🎉`);
       navigate('/home');
     } catch (err) {
-      const msg = err.response?.data?.message || 'Registration failed. Please check your details.';
+      const msg = err.response?.data?.message || 'Registration failed. Please check your information.';
       toast.error(msg);
       setErrors({ general: msg });
     } finally {
@@ -79,7 +80,7 @@ const Register = () => {
   return (
     <div className="editorial-auth-wrapper">
       <div className="editorial-auth-card">
-        {/* Left Editorial Showcase Panel */}
+        {/* Left Showcase Panel */}
         <div className="editorial-auth-showcase">
           <div className="editorial-auth-showcase-bg-circle" />
 
@@ -90,13 +91,13 @@ const Register = () => {
 
           {/* Middle Hero */}
           <div className="editorial-auth-hero-text">
-            <span className="editorial-auth-tagline">NEW PATRON ONBOARDING</span>
+            <span className="editorial-auth-tagline">JOIN PRIME BITES</span>
             <h1 className="editorial-auth-headline">
-              JOIN THE<br />FELLOWSHIP.
+              GREAT FOOD,<br />DELIVERED.
             </h1>
             <p className="editorial-auth-desc">
-              Gain access to bespoke seasonal tastings, priority courier windows, and curated harvests
-              from our network of generational artisans.
+              Create your account in seconds to order from top restaurants, track orders in real time,
+              and unlock exclusive discounts.
             </p>
 
             {/* Micro gallery preview */}
@@ -105,7 +106,7 @@ const Register = () => {
                 <img
                   key={i}
                   src={src}
-                  alt="Curated preview"
+                  alt="Delicious food"
                   className="editorial-auth-img-thumb"
                 />
               ))}
@@ -116,15 +117,15 @@ const Register = () => {
           <div className="editorial-auth-stats">
             <div className="editorial-auth-stat-item">
               <span className="editorial-auth-stat-num">500+</span>
-              <span className="editorial-auth-stat-label">CURATED ESTATES</span>
+              <span className="editorial-auth-stat-label">RESTAURANTS</span>
             </div>
             <div className="editorial-auth-stat-item">
-              <span className="editorial-auth-stat-num">25m</span>
-              <span className="editorial-auth-stat-label">DISPATCH SPEED</span>
+              <span className="editorial-auth-stat-num">30 MIN</span>
+              <span className="editorial-auth-stat-label">AVG. DELIVERY</span>
             </div>
             <div className="editorial-auth-stat-item">
               <span className="editorial-auth-stat-num">100%</span>
-              <span className="editorial-auth-stat-label">ORGANIC PROVENANCE</span>
+              <span className="editorial-auth-stat-label">FRESH & SAFE</span>
             </div>
           </div>
         </div>
@@ -132,9 +133,9 @@ const Register = () => {
         {/* Right Form Panel */}
         <div className="editorial-auth-form-side">
           <div className="editorial-auth-form-header">
-            <span className="editorial-form-pretitle">BECOME A PATRON</span>
+            <span className="editorial-form-pretitle">GET STARTED</span>
             <h2 className="editorial-form-title">REGISTER</h2>
-            <p className="editorial-form-subtitle">BEGIN YOUR HAUTE GASTRONOMY JOURNEY</p>
+            <p className="editorial-form-subtitle">FILL IN YOUR DETAILS TO CREATE AN ACCOUNT</p>
           </div>
 
           {errors.general && (
@@ -150,13 +151,13 @@ const Register = () => {
                 fontFamily: 'Inter',
                 fontSize: '11px',
                 fontWeight: 700,
-                letterSpacing: '0.1em',
+                letterSpacing: '0.05em',
                 marginBottom: '1.5rem',
                 border: '1px solid rgba(158, 42, 43, 0.2)',
               }}
             >
               <FiAlertCircle size={16} aria-hidden="true" />
-              <span>{errors.general.toUpperCase()}</span>
+              <span>{errors.general}</span>
             </div>
           )}
 
@@ -172,7 +173,7 @@ const Register = () => {
                   id="register-name"
                   className={`editorial-text-input ${errors.name ? 'error' : ''}`}
                   type="text"
-                  placeholder="ALEXANDRA DU PONT"
+                  placeholder="John Doe"
                   value={form.name}
                   onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
                   autoComplete="name"
@@ -189,7 +190,7 @@ const Register = () => {
             {/* Email */}
             <div className="editorial-input-group">
               <label className="editorial-input-label" htmlFor="register-email">
-                CORRESPONDENCE EMAIL
+                EMAIL ADDRESS
               </label>
               <div className="editorial-input-wrap">
                 <FiMail className="editorial-input-icon" aria-hidden="true" />
@@ -197,7 +198,7 @@ const Register = () => {
                   id="register-email"
                   className={`editorial-text-input ${errors.email ? 'error' : ''}`}
                   type="email"
-                  placeholder="PATRON@ESTATE.COM"
+                  placeholder="john@example.com"
                   value={form.email}
                   onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
                   autoComplete="email"
@@ -214,7 +215,7 @@ const Register = () => {
             {/* Phone */}
             <div className="editorial-input-group">
               <label className="editorial-input-label" htmlFor="register-phone">
-                CONCIERGE CONTACT (PHONE)
+                PHONE NUMBER
               </label>
               <div className="editorial-input-wrap">
                 <FiPhone className="editorial-input-icon" aria-hidden="true" />
@@ -222,7 +223,7 @@ const Register = () => {
                   id="register-phone"
                   className={`editorial-text-input ${errors.phone ? 'error' : ''}`}
                   type="tel"
-                  placeholder="+1 (555) 000-8888"
+                  placeholder="9876543210"
                   value={form.phone}
                   onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
                   autoComplete="tel"
@@ -239,7 +240,7 @@ const Register = () => {
             {/* Password */}
             <div className="editorial-input-group">
               <label className="editorial-input-label" htmlFor="register-password">
-                ACCESS KEY CODE
+                PASSWORD
               </label>
               <div className="editorial-input-wrap">
                 <FiLock className="editorial-input-icon" aria-hidden="true" />
@@ -247,7 +248,7 @@ const Register = () => {
                   id="register-password"
                   className={`editorial-text-input ${errors.password ? 'error' : ''}`}
                   type={showPassword ? 'text' : 'password'}
-                  placeholder="MINIMUM 6 CHARACTERS"
+                  placeholder="At least 6 characters"
                   value={form.password}
                   onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
                   autoComplete="new-password"
@@ -272,7 +273,7 @@ const Register = () => {
             {/* Confirm Password */}
             <div className="editorial-input-group">
               <label className="editorial-input-label" htmlFor="register-confirm">
-                CONFIRM KEY CODE
+                CONFIRM PASSWORD
               </label>
               <div className="editorial-input-wrap">
                 <FiLock className="editorial-input-icon" aria-hidden="true" />
@@ -280,7 +281,7 @@ const Register = () => {
                   id="register-confirm"
                   className={`editorial-text-input ${errors.confirmPassword ? 'error' : ''}`}
                   type={showConfirm ? 'text' : 'password'}
-                  placeholder="RE-ENTER KEY CODE"
+                  placeholder="Re-enter your password"
                   value={form.confirmPassword}
                   onChange={(e) => setForm((p) => ({ ...p, confirmPassword: e.target.value }))}
                   autoComplete="new-password"
@@ -309,13 +310,13 @@ const Register = () => {
               className="editorial-auth-submit-btn"
               disabled={loading}
             >
-              {loading ? 'ENROLLING...' : 'ENROLL AS PATRON →'}
+              {loading ? 'CREATING ACCOUNT...' : 'CREATE ACCOUNT →'}
             </button>
           </form>
 
           {/* Link to Login */}
           <div className="editorial-auth-switch">
-            <span>ALREADY A PATRON?</span>
+            <span>ALREADY HAVE AN ACCOUNT?</span>
             <Link to="/login" className="editorial-auth-switch-link">
               SIGN IN
             </Link>

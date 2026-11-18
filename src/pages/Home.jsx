@@ -111,21 +111,21 @@ const Home = () => {
   return (
     <div className="page-enter">
       {/* Header */}
-      <div style={{ background: 'linear-gradient(180deg, #fef2f2 0%, var(--color-bg) 100%)', padding: '2.5rem 0 1.5rem' }}>
+      <div style={{ background: 'linear-gradient(180deg, #e9edc9 0%, var(--color-bg) 100%)', padding: '3rem 0 2rem' }}>
         <div className="container">
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(1.5rem, 3vw, 2rem)', fontWeight: 800, marginBottom: '1.5rem' }}>
-            Restaurants near you 🍽️
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, marginBottom: '1.25rem', color: '#01472e', textTransform: 'uppercase' }}>
+            Restaurants & Menu
           </h1>
           {/* Search bar */}
-          <div style={{ position: 'relative', maxWidth: 520, marginBottom: '1.25rem' }}>
-            <FiSearch style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} aria-hidden="true" />
+          <div style={{ position: 'relative', maxWidth: 540, marginBottom: '1.5rem' }}>
+            <FiSearch style={{ position: 'absolute', left: 16, top: '50%', transform: 'translateY(-50%)', color: 'var(--color-text-muted)' }} aria-hidden="true" />
             <input
               ref={inputRef}
               id="home-search"
               className="form-input"
-              style={{ paddingLeft: '2.75rem', borderRadius: 'var(--radius-full)' }}
+              style={{ paddingLeft: '3rem', borderRadius: 'var(--radius-full)', background: '#ffffff', borderColor: 'rgba(1, 71, 46, 0.15)', color: '#01472e' }}
               type="search"
-              placeholder="Search restaurants, cuisine or dishes..."
+              placeholder="Search restaurants, cuisines, or dishes..."
               value={search}
               onChange={handleSearchChange}
               aria-label="Search restaurants"

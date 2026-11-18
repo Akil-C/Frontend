@@ -103,6 +103,17 @@
   --navbar-height: 80px;
 }
 
+/* Main Content Layout - Fixed Navbar Compensation */
+#main-content {
+  min-height: calc(100vh - 80px);
+  padding-top: 80px;
+  box-sizing: border-box;
+}
+
+.editorial-landing-root {
+  margin-top: -80px;
+}
+
 /* --- Dark Mode --- */
 [data-theme="dark"] {
   --color-bg: var(--color-dark-bg);
@@ -2014,9 +2025,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .editorial-headline-massive {
   font-family: 'Anton', sans-serif;
-  font-size: 23vw;
-  line-height: 0.75;
-  letter-spacing: -0.05em;
+  font-size: clamp(3.2rem, 16vw, 15rem);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
   color: #01472e;
   text-transform: uppercase;
   margin: 0;
@@ -2024,7 +2035,9 @@ h1, h2, h3, h4, h5, h6 {
   user-select: none;
   display: flex;
   justify-content: center;
-  overflow: hidden;
+  flex-wrap: wrap;
+  row-gap: 0.5rem;
+  overflow: visible;
 }
 
 .editorial-char {
@@ -2108,24 +2121,25 @@ h1, h2, h3, h4, h5, h6 {
 .editorial-hero-search {
   display: flex;
   align-items: center;
-  background: rgba(254, 250, 224, 0.7);
+  background: rgba(254, 250, 224, 0.85);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(1, 71, 46, 0.2);
+  border: 1.5px solid rgba(1, 71, 46, 0.2);
   border-radius: 9999px;
-  padding: 0.4rem 0.5rem 0.4rem 1.5rem;
-  max-width: 440px;
+  padding: 0.45rem 0.5rem 0.45rem 1.4rem;
+  max-width: 480px;
+  width: 100%;
   box-shadow: 0 10px 25px -8px rgba(1, 71, 46, 0.15);
+  box-sizing: border-box;
 }
 
 .editorial-hero-search input {
   flex: 1;
+  min-width: 0;
   background: transparent;
   border: none;
   font-family: 'Inter', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
+  font-size: 13px;
+  font-weight: 500;
   color: #01472e;
   outline: none;
 }
@@ -2591,7 +2605,16 @@ h1, h2, h3, h4, h5, h6 {
     display: none;
   }
   .editorial-headline-massive {
-    font-size: 26vw;
+    font-size: clamp(2.8rem, 15vw, 5.5rem);
+  }
+  .editorial-blur-overlay {
+    opacity: 1;
+    background: linear-gradient(to top, rgba(1, 71, 46, 0.75) 0%, transparent 60%);
+    padding: 1.5rem;
+  }
+  .editorial-quick-add-btn {
+    transform: translateY(0);
+    padding: 0.85rem 1.4rem;
   }
   .editorial-hero-bottom {
     grid-template-columns: 1fr;

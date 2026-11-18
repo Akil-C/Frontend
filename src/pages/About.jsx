@@ -5,15 +5,15 @@ const About = () => {
     <div className="page-enter">
       {/* Cover */}
       <section style={{
-        background: 'linear-gradient(135deg, #1A1A2E 0%, #16213E 100%)',
-        padding: '5rem 0', color: '#fff', textAlign: 'center'
+        background: 'linear-gradient(135deg, #01472e 0%, #002b1c 100%)',
+        padding: '5rem 0', color: '#fefae0', textAlign: 'center'
       }}>
         <div className="container">
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 800, marginBottom: '1rem' }}>
-            About DeliverY
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '3rem', fontWeight: 800, marginBottom: '1rem', color: '#fefae0' }}>
+            About Prime Bites
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.8)', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>
-            Connecting hungry customers with their favourite local restaurants since 2026.
+          <p style={{ color: '#ccd5ae', fontSize: '1.125rem', maxWidth: '600px', margin: '0 auto' }}>
+            Connecting hungry customers with their favourite local restaurants and fresh meals.
           </p>
         </div>
       </section>
@@ -25,7 +25,7 @@ const About = () => {
             Our Story
           </h2>
           <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '1rem' }}>
-            DeliverY started with a simple idea: what if you could order from any restaurant in your city and get the food delivered within 30 minutes, piping hot and fresh?
+            Prime Bites started with a simple idea: what if you could order from any top restaurant in your city and get fresh, delicious food delivered in minutes?
           </p>
           <p style={{ color: 'var(--color-text-secondary)', lineHeight: 1.7, marginBottom: '1rem' }}>
             Over the years, we have grown from a small startup delivering in a single neighborhood to one of the leading food tech platforms in the country, connecting millions of customers with over 500 partner restaurants and employing thousands of delivery executives.
